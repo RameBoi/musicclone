@@ -7,36 +7,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      THEOS: /home/runner/theos
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install packages
+      - name: Install Theos, iOS toolchain and SDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential fakeroot git curl perl rsync zip unzip xz-utils libplist-utils dpkg
+          # Official Theos installer: installs dependencies, Theos, and the Linux iOS toolchain
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          # iOS 10.3 SDK: new enough to build, and still supports 32-bit armv7 + iOS 8 target
+          "$THEOS/bin/install-sdk" iPhoneOS10.3
+          ls "$THEOS/sdks"
+          ls "$THEOS/toolchain" || true
 
-      - name: Install Theos
+      - name: Make sure ldid (signing) is available
         run: |
-          git clone --recursive --depth=1 https://github.com/theos/theos.git "$HOME/theos"
-          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
-
-      - name: Install iOS toolchain (Linux clang + ld64)
-        run: |
-          mkdir -p "$HOME/theos/toolchain"
-          curl -fsSL -o /tmp/toolchain.tar.xz https://github.com/L1ghtmann/llvm-project/releases/latest/download/iOSToolchain.tar.xz
-          tar -xf /tmp/toolchain.tar.xz -C "$HOME/theos/toolchain"
-          ls "$HOME/theos/toolchain" "$HOME/theos/toolchain"/* | head -40
-
-      - name: Install iOS SDKs
-        run: |
-          rm -rf "$HOME/theos/sdks"
-          git clone --depth=1 https://github.com/theos/sdks.git "$HOME/theos/sdks"
-          ls "$HOME/theos/sdks"
-
-      - name: Install ldid (signing)
-        run: |
-          sudo curl -fsSL -o /usr/local/bin/ldid https://github.com/ProcursusTeam/ldid/releases/latest/download/ldid_linux_x86_64
-          sudo chmod +x /usr/local/bin/ldid
+          command -v ldid || sudo apt-get install -y ldid
+          command -v ldid || ls "$THEOS/bin"
 
       - name: Build
         run: make package FINALPACKAGE=1
