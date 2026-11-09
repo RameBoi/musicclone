@@ -1,0 +1,9 @@
+Package: com.musicclone.ios8
+Name: Music Clone
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Apple Music (iPadOS) styled player for your own mp3s
+Maintainer: RameBoi
+Author: RameBoi
+Section: Multimedia
+Depends: firmware (>= 8.0)
