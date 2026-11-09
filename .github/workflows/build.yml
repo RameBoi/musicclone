@@ -35,7 +35,6 @@ jobs:
 
       - name: Check app contents
         run: |
-          ls -la Resources
           find .theos/_ -type f | head -40
           APP=$(find .theos/_ -maxdepth 4 -name '*.app' | head -1)
           test -f "$APP/Info.plist" || { echo "ERROR: Info.plist is missing from $APP"; exit 1; }
