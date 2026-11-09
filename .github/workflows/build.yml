@@ -21,9 +21,13 @@ jobs:
           ls "$THEOS/sdks"
           ls "$THEOS/toolchain" || true
 
-      - name: Make sure ldid (signing) is available
+      - name: Install ldid (app signing tool)
         run: |
-          command -v ldid || sudo apt-get install -y ldid
+          echo "$THEOS/bin" >> "$GITHUB_PATH"
+          if ! command -v ldid >/dev/null && [ ! -x "$THEOS/bin/ldid" ]; then
+            sudo curl -fsSL -o /usr/local/bin/ldid https://github.com/ProcursusTeam/ldid/releases/latest/download/ldid_linux_x86_64
+            sudo chmod +x /usr/local/bin/ldid
+          fi
           command -v ldid || ls "$THEOS/bin"
 
       - name: Build
