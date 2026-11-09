@@ -13,4 +13,5 @@ include $(THEOS_MAKE_PATH)/application.mk
 
 after-stage::
 	$(ECHO_NOTHING)mkdir -p $(THEOS_STAGING_DIR)/Applications/MusicClone.app$(ECHO_END)
-	$(ECHO_NOTHING)cp -f Resources/* $(THEOS_STAGING_DIR)/Applications/MusicClone.app/$(ECHO_END)
+	$(ECHO_NOTHING)cp -f Info.plist $(THEOS_STAGING_DIR)/Applications/MusicClone.app/Info.plist$(ECHO_END)
+	$(ECHO_NOTHING)python3 make_assets.py $(THEOS_STAGING_DIR)/Applications/MusicClone.app$(ECHO_END)
